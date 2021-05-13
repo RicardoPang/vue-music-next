@@ -48,7 +48,7 @@ export default {
     return {
       sliders: [],
       albums: [],
-      loadingText: '加载中'
+      loadingText: '正在载入...'
     }
   },
   computed: {
