@@ -5,7 +5,7 @@ import { onMounted, onUnmounted, ref } from 'vue'
 // 自动弹出内容变化，计算高度并滚动
 BScroll.use(ObserveDOM)
 
-export default function useScroll (wrapperRef, options, emit) {
+export default function useScroll(wrapperRef, options, emit) {
   const scroll = ref(null)
 
   onMounted(() => {
@@ -24,4 +24,6 @@ export default function useScroll (wrapperRef, options, emit) {
   onUnmounted(() => {
     scroll.value.destroy()
   })
+
+  return scroll
 }
