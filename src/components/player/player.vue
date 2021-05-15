@@ -19,13 +19,13 @@
             <i class="icon-sequence"></i>
           </div>
           <div class="icon i-left">
-            <i class="icon-prev"></i>
+            <i @click="prev" class="icon-prev"></i>
           </div>
-          <div @click="togglePlay" class="icon i-center">
-            <i :class="playIcon"></i>
+          <div class="icon i-center">
+            <i @click="togglePlay" :class="playIcon"></i>
           </div>
           <div class="icon i-right">
-            <i class="icon-next"></i>
+            <i @click="next" class="icon-next"></i>
           </div>
           <div class="icon i-right">
             <i class="icon-not-favorite"></i>
@@ -52,6 +52,8 @@ export default {
     const fullScreen = computed(() => store.state.fullScreen)
     const currentSong = computed(() => store.getters.currentSong)
     const playing = computed(() => store.state.playing)
+    const currentIndex = computed(() => store.state.currentIndex)
+    const playlist = computed(() => store.state.playlist)
 
     const playIcon = computed(() => {
       return playing.value ? 'icon-pause' : 'icon-play'
@@ -83,6 +85,48 @@ export default {
       store.commit('setPlayingState', false)
     }
 
+    function prev () {
+      const list = playlist.value
+      if (!list.length) return
+
+      if (list.length === 1) {
+        loop()
+      } else {
+        let index = currentIndex.value - 1
+        if (index === -1) {
+          index = list.length - 1
+        }
+        store.commit('setCurrentIndex', index)
+        if (!playing.value) {
+          store.commit('setPlayingState', true)
+        }
+      }
+    }
+
+    function next () {
+      const list = playlist.value
+      if (!list.length) return
+
+      if (list.length === 1) {
+        loop()
+      } else {
+        let index = currentIndex.value + 1
+        if (index === list.length) {
+          index = 0
+        }
+        store.commit('setCurrentIndex', index)
+        if (!playing.value) {
+          store.commit('setPlayingState', true)
+        }
+      }
+    }
+
+    function loop () {
+      const audioEl = audioRef.value
+      audioEl.currentTime = 0
+      audioEl.play()
+    }
+
     return {
       audioRef,
       fullScreen,
@@ -90,7 +134,9 @@ export default {
       playIcon,
       goBack,
       togglePlay,
-      pause
+      pause,
+      prev,
+      next
     }
   }
 }
