@@ -28,7 +28,7 @@
             <i @click="next" class="icon-next"></i>
           </div>
           <div class="icon i-right">
-            <i class="icon-not-favorite"></i>
+            <i @click="toggleFavorite(currentSong)" :class="getFavoriteIcon(currentSong)"></i>
           </div>
         </div>
       </div>
@@ -45,10 +45,11 @@
 import { useStore } from 'vuex'
 import { computed, watch, ref } from 'vue'
 import useMode from './use-mode'
+import useFavorite from './use-favorite'
 
 export default {
   name: 'player',
-  setup () {
+  setup() {
     // data
     const audioRef = ref(null)
     const songReady = ref(false)
@@ -65,6 +66,10 @@ export default {
       modeIcon,
       changeMode
     } = useMode()
+    const {
+      getFavoriteIcon,
+      toggleFavorite
+    } = useFavorite()
 
     // computed
     const playlist = computed(() => store.state.playlist)
@@ -95,20 +100,20 @@ export default {
     })
 
     // methods
-    function goBack () {
+    function goBack() {
       store.commit('setFullScreen', false)
     }
 
-    function togglePlay () {
+    function togglePlay() {
       if (!songReady.value) ready()
       store.commit('setPlayingState', !playing.value)
     }
 
-    function pause () {
+    function pause() {
       store.commit('setPlayingState', false)
     }
 
-    function prev () {
+    function prev() {
       const list = playlist.value
       if (!songReady.value || !list.length) return
 
@@ -126,7 +131,7 @@ export default {
       }
     }
 
-    function next () {
+    function next() {
       const list = playlist.value
       if (!songReady.value || !list.length) return
 
@@ -144,18 +149,18 @@ export default {
       }
     }
 
-    function loop () {
+    function loop() {
       const audioEl = audioRef.value
       audioEl.currentTime = 0
       audioEl.play()
     }
 
-    function ready () {
+    function ready() {
       if (songReady.value) return
       songReady.value = true
     }
 
-    function error () {
+    function error() {
       songReady.value = true
     }
 
@@ -174,7 +179,10 @@ export default {
       error,
       // mode
       modeIcon,
-      changeMode
+      changeMode,
+      // favorite
+      getFavoriteIcon,
+      toggleFavorite
     }
   }
 }
