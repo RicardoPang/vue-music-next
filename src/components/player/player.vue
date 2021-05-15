@@ -14,7 +14,7 @@
         <h2 class="subtitle">{{ currentSong.singer }}</h2>
       </div>
       <div class="middle">
-        <div class="middle-l" v-show="false">
+        <div class="middle-l">
           <div class="cd-wrapper">
             <div
                 ref="cdRef"
@@ -26,6 +26,9 @@
                   :src="currentSong.pic"
                   alt=""/>
             </div>
+          </div>
+          <div class="playing-lyric-wrapper">
+            <div class="playing-lyric">{{ playingLyric }}</div>
           </div>
         </div>
         <scroll
@@ -41,6 +44,9 @@
               >
                 {{ line.txt }}
               </p>
+            </div>
+            <div class="pure-music" v-show="pureMusicLyric">
+              <p>{{ pureMusicLyric }}</p>
             </div>
           </div>
         </scroll>
@@ -138,6 +144,8 @@ export default {
     const {
       currentLyric,
       currentLineNum,
+      pureMusicLyric,
+      playingLyric,
       playLyric,
       stopLyric,
       lyricScrollRef,
@@ -317,6 +325,8 @@ export default {
       //  lyric
       currentLyric,
       currentLineNum,
+      pureMusicLyric,
+      playingLyric,
       lyricScrollRef,
       lyricListRef
     }
