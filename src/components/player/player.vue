@@ -17,7 +17,10 @@
         <div class="progress-wrapper">
           <span class="time time-l">{{ formatTime(currentTime) }}</span>
           <div class="progress-bar-wrapper">
-            <progress-bar :progress="progress"></progress-bar>
+            <progress-bar
+                :progress="progress"
+                @progress-changing="onProgressChanging"
+                @progress-changed="onProgressChanged"></progress-bar>
           </div>
           <span class="time time-r">{{ formatTime(currentSong.duration) }}</span>
         </div>
@@ -45,7 +48,8 @@
         @pause="pause"
         @canplay="ready"
         @error="error"
-        @timeupdate="updateTime"></audio>
+        @timeupdate="updateTime"
+        @ended="end"></audio>
   </div>
 </template>
 
@@ -56,6 +60,7 @@ import useMode from './use-mode'
 import useFavorite from './use-favorite'
 import ProgressBar from './progress-bar'
 import { formatTime } from '@/assets/js/util'
+import { PLAY_MODE } from '@/assets/js/constant'
 
 export default {
   name: 'player',
@@ -65,6 +70,7 @@ export default {
     const audioRef = ref(null)
     const songReady = ref(false)
     const currentTime = ref(0)
+    let progressChanging = false
 
     // vuex
     const store = useStore()
@@ -170,6 +176,7 @@ export default {
       const audioEl = audioRef.value
       audioEl.currentTime = 0
       audioEl.play()
+      store.commit('setPlayingState', true)
     }
 
     function ready() {
@@ -182,7 +189,31 @@ export default {
     }
 
     function updateTime(e) {
-      currentTime.value = e.target.currentTime
+      if (!progressChanging) {
+        currentTime.value = e.target.currentTime
+      }
+    }
+
+    function onProgressChanging(progress) {
+      progressChanging = true
+      currentTime.value = currentSong.value.duration * progress
+    }
+
+    function onProgressChanged(progress) {
+      progressChanging = false
+      audioRef.value.currentTime = currentTime.value = currentSong.value.duration * progress
+      if (!playing.value) {
+        store.commit('setPlayingState', true)
+      }
+    }
+
+    function end() {
+      currentTime.value = 0
+      if (PLAY_MODE.value === PLAY_MODE.loop) {
+        loop()
+      } else {
+        next()
+      }
     }
 
     return {
@@ -202,6 +233,9 @@ export default {
       error,
       updateTime,
       formatTime,
+      onProgressChanging,
+      onProgressChanged,
+      end,
       // mode
       modeIcon,
       changeMode,
