@@ -14,7 +14,7 @@
         <h2 class="subtitle">{{ currentSong.singer }}</h2>
       </div>
       <div class="middle">
-        <div class="middle-l">
+        <div class="middle-l" v-show="false">
           <div class="cd-wrapper">
             <div
                 ref="cdRef"
@@ -28,6 +28,22 @@
             </div>
           </div>
         </div>
+        <scroll
+            class="middle-r"
+            ref="lyricScrollRef">
+          <div class="lyric-wrapper">
+            <div v-if="currentLyric" ref="lyricListRef">
+              <p
+                  class="text"
+                  :class="{'current': currentLineNum === index}"
+                  v-for="(line,index) in currentLyric.lines"
+                  :key="line.num"
+              >
+                {{ line.txt }}
+              </p>
+            </div>
+          </div>
+        </scroll>
       </div>
       <div class="bottom">
         <div class="progress-wrapper">
@@ -79,10 +95,14 @@ import useLyric from './use-lyric'
 import ProgressBar from './progress-bar'
 import { formatTime } from '@/assets/js/util'
 import { PLAY_MODE } from '@/assets/js/constant'
+import Scroll from '@/components/base/scroll/scroll'
 
 export default {
   name: 'player',
-  components: { ProgressBar },
+  components: {
+    Scroll,
+    ProgressBar
+  },
   setup() {
     // data
     const audioRef = ref(null)
@@ -115,7 +135,17 @@ export default {
       cdImageRef
     } = useCd()
 
-    useLyric()
+    const {
+      currentLyric,
+      currentLineNum,
+      playLyric,
+      stopLyric,
+      lyricScrollRef,
+      lyricListRef
+    } = useLyric({
+      songReady,
+      currentTime
+    })
 
     // computed
     const playlist = computed(() => store.state.playlist)
@@ -147,7 +177,13 @@ export default {
     watch(playing, (newPlaying) => {
       if (!songReady.value) return
       const audioEl = audioRef.value
-      newPlaying ? audioEl.play() : audioEl.pause()
+      if (newPlaying) {
+        audioEl.play()
+        playLyric()
+      } else {
+        audioEl.pause()
+        stopLyric()
+      }
     })
 
     // methods
@@ -210,6 +246,7 @@ export default {
     function ready() {
       if (songReady.value) return
       songReady.value = true
+      playLyric()
     }
 
     function error() {
@@ -225,6 +262,8 @@ export default {
     function onProgressChanging(progress) {
       progressChanging = true
       currentTime.value = currentSong.value.duration * progress
+      playLyric()
+      stopLyric()
     }
 
     function onProgressChanged(progress) {
@@ -233,6 +272,7 @@ export default {
       if (!playing.value) {
         store.commit('setPlayingState', true)
       }
+      playLyric()
     }
 
     function end() {
@@ -273,7 +313,12 @@ export default {
       // cd
       cdCls,
       cdRef,
-      cdImageRef
+      cdImageRef,
+      //  lyric
+      currentLyric,
+      currentLineNum,
+      lyricScrollRef,
+      lyricListRef
     }
   }
 }
@@ -467,7 +512,7 @@ export default {
         display: flex;
         align-items: center;
         width: 80%;
-        margin: 0 auto;
+        margin: 0px auto;
         padding: 10px 0;
 
         .time {
