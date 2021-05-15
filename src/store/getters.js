@@ -1,3 +1,3 @@
 export const currentSong = (state) => {
-  return state.playlist[state.currentIndex]
+  return state.playlist[state.currentIndex] || {}
 }
