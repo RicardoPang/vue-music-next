@@ -78,6 +78,7 @@ export default {
     const currentSong = computed(() => store.getters.currentSong)
     const playing = computed(() => store.state.playing)
     const currentIndex = computed(() => store.state.currentIndex)
+    const playMode = computed(() => store.state.playMode)
 
     // hooks
     const {
@@ -209,7 +210,7 @@ export default {
 
     function end() {
       currentTime.value = 0
-      if (PLAY_MODE.value === PLAY_MODE.loop) {
+      if (playMode.value === PLAY_MODE.loop) {
         loop()
       } else {
         next()
