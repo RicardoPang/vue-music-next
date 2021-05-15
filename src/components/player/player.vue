@@ -75,6 +75,7 @@ import { computed, watch, ref } from 'vue'
 import useMode from './use-mode'
 import useFavorite from './use-favorite'
 import useCd from './use-cd'
+import useLyric from './use-lyric'
 import ProgressBar from './progress-bar'
 import { formatTime } from '@/assets/js/util'
 import { PLAY_MODE } from '@/assets/js/constant'
@@ -102,15 +103,19 @@ export default {
       modeIcon,
       changeMode
     } = useMode()
+
     const {
       getFavoriteIcon,
       toggleFavorite
     } = useFavorite()
+
     const {
       cdCls,
       cdRef,
       cdImageRef
     } = useCd()
+
+    useLyric()
 
     // computed
     const playlist = computed(() => store.state.playlist)

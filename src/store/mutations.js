@@ -1,24 +1,35 @@
 const mutations = {
-  setPlayingState (state, playing) {
+  setPlayingState(state, playing) {
     state.playing = playing
   },
-  setSequenceList (state, list) {
+  setSequenceList(state, list) {
     state.sequenceList = list
   },
-  setPlaylist (state, list) {
+  setPlaylist(state, list) {
     state.playlist = list
   },
-  setPlayMode (state, mode) {
+  setPlayMode(state, mode) {
     state.playMode = mode
   },
-  setCurrentIndex (state, index) {
+  setCurrentIndex(state, index) {
     state.currentIndex = index
   },
-  setFullScreen (state, fullScreen) {
+  setFullScreen(state, fullScreen) {
     state.fullScreen = fullScreen
   },
-  setFavoriteList (state, list) {
+  setFavoriteList(state, list) {
     state.favoriteList = list
+  },
+  addSongLyric(state, {
+    song,
+    lyric
+  }) {
+    state.sequenceList.map((item) => {
+      if (item.mid === song.mid) {
+        item.lyric = lyric
+      }
+      return item
+    })
   }
 }
 
