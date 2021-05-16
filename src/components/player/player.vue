@@ -1,5 +1,5 @@
 <template>
-  <div class="player">
+  <div class="player" v-show="playlist.length">
     <div
         class="normal-player"
         v-show="fullScreen">
@@ -90,6 +90,7 @@
         </div>
       </div>
     </div>
+    <mini-player></mini-player>
     <audio
         ref="audioRef"
         @pause="pause"
@@ -109,13 +110,15 @@ import useCd from './use-cd'
 import useLyric from './use-lyric'
 import useMiddleInteractive from './use-middle-interactive'
 import ProgressBar from './progress-bar'
+import Scroll from '@/components/base/scroll/scroll'
+import MiniPlayer from './mini-player'
 import { formatTime } from '@/assets/js/util'
 import { PLAY_MODE } from '@/assets/js/constant'
-import Scroll from '@/components/base/scroll/scroll'
 
 export default {
   name: 'player',
   components: {
+    MiniPlayer,
     Scroll,
     ProgressBar
   },
@@ -316,6 +319,7 @@ export default {
       fullScreen,
       currentTime,
       currentSong,
+      playlist,
       playIcon,
       disableCls,
       progress,
