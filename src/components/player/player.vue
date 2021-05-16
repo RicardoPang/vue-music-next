@@ -65,6 +65,7 @@
           <span class="time time-l">{{ formatTime(currentTime) }}</span>
           <div class="progress-bar-wrapper">
             <progress-bar
+                ref="barRef"
                 :progress="progress"
                 @progress-changing="onProgressChanging"
                 @progress-changed="onProgressChanged"></progress-bar>
@@ -105,7 +106,7 @@
 
 <script>
 import { useStore } from 'vuex'
-import { computed, watch, ref } from 'vue'
+import { computed, watch, ref, nextTick } from 'vue'
 import useMode from './use-mode'
 import useFavorite from './use-favorite'
 import useCd from './use-cd'
@@ -127,6 +128,7 @@ export default {
   setup() {
     // data
     const audioRef = ref(null)
+    const barRef = ref(null)
     const songReady = ref(false)
     const currentTime = ref(0)
     let progressChanging = false
@@ -215,6 +217,13 @@ export default {
       } else {
         audioEl.pause()
         stopLyric()
+      }
+    })
+
+    watch(fullScreen, async (newFullScreen) => {
+      if (newFullScreen) {
+        await nextTick()
+        barRef.value.setOffset(progress.value)
       }
     })
 
@@ -318,6 +327,7 @@ export default {
 
     return {
       audioRef,
+      barRef,
       fullScreen,
       currentTime,
       currentSong,
