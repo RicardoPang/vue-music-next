@@ -21,7 +21,9 @@
           <span class="text">搜索历史</span>
         </h1>
         <search-list
-            :searches="searchHistory">
+            :searches="searchHistory"
+            @select="addQuery"
+            @delete="deleteSearch">
         </search-list>
       </div>
     </div>
@@ -42,7 +44,7 @@
 <script>
 import SearchInput from '@/components/search/search-input'
 import Suggest from '@/components/search/suggest'
-import SearchList from '@/components/search/search-list'
+import SearchList from '@/components/base/search-list/search-list'
 import { computed, ref } from 'vue'
 import { getHotKeys } from '@/service/search'
 import { useStore } from 'vuex'
@@ -68,7 +70,7 @@ export default {
 
     const router = useRouter()
 
-    const { saveSearch } = useSearchHistory()
+    const { saveSearch, deleteSearch } = useSearchHistory()
 
     getHotKeys().then((result) => {
       hotKeys.value = result.hotKeys
@@ -103,7 +105,9 @@ export default {
       searchHistory,
       addQuery,
       selectSong,
-      selectSinger
+      selectSinger,
+      // searchHistory
+      deleteSearch
     }
   }
 }
