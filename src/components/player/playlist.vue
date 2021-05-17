@@ -78,6 +78,7 @@
 
 <script>
 import Scroll from '@/components/base/scroll/scroll'
+import Confirm from '@/components/base/confirm/confirm'
 import { ref, computed, nextTick, watch } from 'vue'
 import { useStore } from 'vuex'
 import useMode from './use-mode'
@@ -86,6 +87,7 @@ import useFavorite from './use-favorite'
 export default {
   name: 'playlist',
   components: {
+    Confirm,
     Scroll
   },
   setup () {
@@ -93,6 +95,7 @@ export default {
     const removing = ref(false)
     const scrollRef = ref(null)
     const listRef = ref(null)
+    const confirmRef = ref(null)
 
     const store = useStore()
     const playlist = computed(() => store.state.playlist)
@@ -163,9 +166,21 @@ export default {
       if (removing.value) return
       removing.value = true
       store.dispatch('removeSong', song)
+      if (!playlist.value.length) {
+        hide()
+      }
       setTimeout(() => {
         removing.value = false
       })
+    }
+
+    function showConfirm () {
+      confirmRef.value.show()
+    }
+
+    function confirmClear () {
+      store.dispatch('clearSongList')
+      hide()
     }
 
     return {
@@ -173,6 +188,7 @@ export default {
       removing,
       scrollRef,
       listRef,
+      confirmRef,
       playlist,
       sequenceList,
       getCurrentIcon,
@@ -180,6 +196,8 @@ export default {
       hide,
       selectItem,
       removeSong,
+      showConfirm,
+      confirmClear,
       // mode
       modeIcon,
       modeText,
