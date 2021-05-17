@@ -16,6 +16,14 @@
           </li>
         </ul>
       </div>
+      <div class="search-history" v-show="searchHistory.length">
+        <h1 class="title">
+          <span class="text">搜索历史</span>
+        </h1>
+        <search-list
+            :searches="searchHistory">
+        </search-list>
+      </div>
     </div>
     <div class="search-result" v-show="query">
       <suggest
@@ -33,17 +41,20 @@
 
 <script>
 import SearchInput from '@/components/search/search-input'
-import { ref } from 'vue'
-import { getHotKeys } from '@/service/search'
 import Suggest from '@/components/search/suggest'
+import SearchList from '@/components/search/search-list'
+import { computed, ref } from 'vue'
+import { getHotKeys } from '@/service/search'
 import { useStore } from 'vuex'
 import { useRouter } from 'vue-router'
 import storage from 'good-storage'
 import { SINGER_KEY } from '@/assets/js/constant'
+import useSearchHistory from '@/components/search/use-search-history'
 
 export default {
   name: 'search',
   components: {
+    SearchList,
     Suggest,
     SearchInput
   },
@@ -53,8 +64,11 @@ export default {
     const selectedSinger = ref(null)
 
     const store = useStore()
+    const searchHistory = computed(() => store.state.searchHistory)
 
     const router = useRouter()
+
+    const { saveSearch } = useSearchHistory()
 
     getHotKeys().then((result) => {
       hotKeys.value = result.hotKeys
@@ -65,10 +79,12 @@ export default {
     }
 
     function selectSong(song) {
+      saveSearch(query.value)
       store.dispatch('addSong', song)
     }
 
     function selectSinger(singer) {
+      saveSearch(query.value)
       selectedSinger.value = singer
       cacheSinger(singer)
 
@@ -84,6 +100,7 @@ export default {
     return {
       query,
       hotKeys,
+      searchHistory,
       addQuery,
       selectSong,
       selectSinger
