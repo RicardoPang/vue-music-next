@@ -55,15 +55,20 @@ export default {
       default: true
     }
   },
-  setup (props) {
+  setup(props) {
     const singer = ref(null)
     const songs = ref([])
     const hasMore = ref(true)
     const page = ref(1)
     const loadingText = ref('')
+    const noResultText = ref('抱歉，暂无搜索结果')
 
     const loading = computed(() => {
       return !singer.value && !songs.value.length
+    })
+
+    const noResult = computed(() => {
+      return !singer.value && !songs.value.length && !hasMore.value
     })
 
     watch(() => props.query, async (newQuery) => {
@@ -71,7 +76,7 @@ export default {
       await searchFirst()
     })
 
-    async function searchFirst () {
+    async function searchFirst() {
       page.value = 1
       songs.value = []
       singer.value = null
@@ -87,7 +92,9 @@ export default {
       singer,
       songs,
       loading,
-      loadingText
+      loadingText,
+      noResult,
+      noResultText
     }
   }
 }
