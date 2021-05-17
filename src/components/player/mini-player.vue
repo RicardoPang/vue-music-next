@@ -57,6 +57,7 @@
 import { useStore } from 'vuex'
 import { computed, ref } from 'vue'
 import useCd from './use-cd'
+import useMiniSlider from './use-mini-slider'
 import ProgressCircle from './progress-circle'
 
 export default {
@@ -86,6 +87,8 @@ export default {
       cdImageRef
     } = useCd()
 
+    const { sliderWrapperRef } = useMiniSlider()
+
     const miniPlayIcon = computed(() => {
       return playing.value ? 'icon-pause-mini' : 'icon-play-mini'
     })
@@ -109,7 +112,9 @@ export default {
       // cd
       cdCls,
       cdRef,
-      cdImageRef
+      cdImageRef,
+      // mini-slider
+      sliderWrapperRef
     }
   }
 }
