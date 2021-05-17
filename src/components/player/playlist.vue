@@ -78,7 +78,7 @@
 
 <script>
 import Scroll from '@/components/base/scroll/scroll'
-import { ref, computed, nextTick } from 'vue'
+import { ref, computed, nextTick, watch } from 'vue'
 import { useStore } from 'vuex'
 import useMode from './use-mode'
 import useFavorite from './use-favorite'
@@ -91,6 +91,7 @@ export default {
   setup () {
     const visible = ref(null)
     const scrollRef = ref(null)
+    const listRef = ref(null)
 
     const store = useStore()
     const playlist = computed(() => store.state.playlist)
@@ -107,6 +108,12 @@ export default {
       toggleFavorite
     } = useFavorite()
 
+    watch(currentSong, async () => {
+      if (!visible.value) return
+      await nextTick()
+      scrollToCurrent()
+    })
+
     function getCurrentIcon (song) {
       if (song.id === currentSong.value.id) {
         return 'icon-play'
@@ -119,24 +126,49 @@ export default {
       await nextTick()
 
       refreshScroll()
+      scrollToCurrent()
     }
 
     function hide () {
       visible.value = false
     }
 
+    function selectItem (song) {
+      const index = playlist.value.findIndex((item) => {
+        return song.id === item.id
+      })
+
+      store.commit('setCurrentIndex', index)
+      store.commit('setPlayingState', true)
+    }
+
     function refreshScroll () {
       scrollRef.value.scroll.refresh()
+    }
+
+    function scrollToCurrent () {
+      const index = sequenceList.value.findIndex((song) => {
+        return currentSong.value.id === song.id
+      })
+      console.log(index)
+      if (index === -1) {
+        return
+      }
+      const target = listRef.value.$el.children[index]
+
+      scrollRef.value.scroll.scrollToElement(target, 300)
     }
 
     return {
       visible,
       scrollRef,
+      listRef,
       playlist,
       sequenceList,
       getCurrentIcon,
       show,
       hide,
+      selectItem,
       // mode
       modeIcon,
       modeText,
