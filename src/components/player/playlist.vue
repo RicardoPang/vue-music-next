@@ -79,6 +79,7 @@
 <script>
 import Scroll from '@/components/base/scroll/scroll'
 import Confirm from '@/components/base/confirm/confirm'
+import AddSong from '@/components/add-song/add-song'
 import { ref, computed, nextTick, watch } from 'vue'
 import { useStore } from 'vuex'
 import useMode from './use-mode'
@@ -87,15 +88,17 @@ import useFavorite from './use-favorite'
 export default {
   name: 'playlist',
   components: {
+    AddSong,
     Confirm,
     Scroll
   },
-  setup () {
+  setup() {
     const visible = ref(null)
     const removing = ref(false)
     const scrollRef = ref(null)
     const listRef = ref(null)
     const confirmRef = ref(null)
+    const addSongRef = ref(null)
 
     const store = useStore()
     const playlist = computed(() => store.state.playlist)
@@ -118,13 +121,13 @@ export default {
       scrollToCurrent()
     })
 
-    function getCurrentIcon (song) {
+    function getCurrentIcon(song) {
       if (song.id === currentSong.value.id) {
         return 'icon-play'
       }
     }
 
-    async function show () {
+    async function show() {
       visible.value = true
 
       await nextTick()
@@ -133,11 +136,11 @@ export default {
       scrollToCurrent()
     }
 
-    function hide () {
+    function hide() {
       visible.value = false
     }
 
-    function selectItem (song) {
+    function selectItem(song) {
       const index = playlist.value.findIndex((item) => {
         return song.id === item.id
       })
@@ -146,11 +149,11 @@ export default {
       store.commit('setPlayingState', true)
     }
 
-    function refreshScroll () {
+    function refreshScroll() {
       scrollRef.value.scroll.refresh()
     }
 
-    function scrollToCurrent () {
+    function scrollToCurrent() {
       const index = sequenceList.value.findIndex((song) => {
         return currentSong.value.id === song.id
       })
@@ -162,7 +165,7 @@ export default {
       scrollRef.value.scroll.scrollToElement(target, 300)
     }
 
-    function removeSong (song) {
+    function removeSong(song) {
       if (removing.value) return
       removing.value = true
       store.dispatch('removeSong', song)
@@ -174,13 +177,17 @@ export default {
       })
     }
 
-    function showConfirm () {
+    function showConfirm() {
       confirmRef.value.show()
     }
 
-    function confirmClear () {
+    function confirmClear() {
       store.dispatch('clearSongList')
       hide()
+    }
+
+    function showAddSong() {
+      addSongRef.value.show()
     }
 
     return {
@@ -189,6 +196,7 @@ export default {
       scrollRef,
       listRef,
       confirmRef,
+      addSongRef,
       playlist,
       sequenceList,
       getCurrentIcon,
@@ -198,6 +206,7 @@ export default {
       removeSong,
       showConfirm,
       confirmClear,
+      showAddSong,
       // mode
       modeIcon,
       modeText,
