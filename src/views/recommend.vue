@@ -36,7 +36,7 @@
 <script>
 import { getRecommend } from '../service/recommend'
 import Slider from '@/components/base/slider/slider'
-import Scroll from '@/components/base/scroll/scroll'
+import Scroll from '@/components/wrap-scroll'
 
 export default {
   name: 'recommend',
