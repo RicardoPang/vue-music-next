@@ -159,6 +159,10 @@ export default {
       scrollRef.value.scroll.scrollToElement(target, 300)
     }
 
+    function removeSong(song) {
+      store.dispatch('removeSong', song)
+    }
+
     return {
       visible,
       scrollRef,
@@ -169,6 +173,7 @@ export default {
       show,
       hide,
       selectItem,
+      removeSong,
       // mode
       modeIcon,
       modeText,
