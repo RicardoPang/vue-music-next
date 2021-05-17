@@ -49,7 +49,7 @@
       <div class="control" @click.stop="showPlaylist">
         <i class="icon-playlist"></i>
       </div>
-      <Playlist ref="playlistRef"></Playlist>
+      <playlist ref="playlistRef"></playlist>
     </div>
   </transition>
 </template>
@@ -75,7 +75,7 @@ export default {
     },
     togglePlay: Function
   },
-  setup() {
+  setup () {
     const playlistRef = ref(null)
 
     const store = useStore()
@@ -89,18 +89,17 @@ export default {
       cdRef,
       cdImageRef
     } = useCd()
-
     const { sliderWrapperRef } = useMiniSlider()
 
     const miniPlayIcon = computed(() => {
       return playing.value ? 'icon-pause-mini' : 'icon-play-mini'
     })
 
-    function showNormalPlayer() {
+    function showNormalPlayer () {
       store.commit('setFullScreen', true)
     }
 
-    function showPlaylist() {
+    function showPlaylist () {
       playlistRef.value.show()
     }
 

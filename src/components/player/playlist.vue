@@ -90,6 +90,7 @@ export default {
   },
   setup () {
     const visible = ref(null)
+    const removing = ref(false)
     const scrollRef = ref(null)
     const listRef = ref(null)
 
@@ -108,8 +109,8 @@ export default {
       toggleFavorite
     } = useFavorite()
 
-    watch(currentSong, async () => {
-      if (!visible.value) return
+    watch(currentSong, async (newSong) => {
+      if (!visible.value || !newSong.id) return
       await nextTick()
       scrollToCurrent()
     })
@@ -150,7 +151,6 @@ export default {
       const index = sequenceList.value.findIndex((song) => {
         return currentSong.value.id === song.id
       })
-      console.log(index)
       if (index === -1) {
         return
       }
@@ -159,12 +159,18 @@ export default {
       scrollRef.value.scroll.scrollToElement(target, 300)
     }
 
-    function removeSong(song) {
+    function removeSong (song) {
+      if (removing.value) return
+      removing.value = true
       store.dispatch('removeSong', song)
+      setTimeout(() => {
+        removing.value = false
+      })
     }
 
     return {
       visible,
+      removing,
       scrollRef,
       listRef,
       playlist,
