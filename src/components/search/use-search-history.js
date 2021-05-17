@@ -1,4 +1,4 @@
-import { save, remove } from '@/assets/js/array-store'
+import { save, remove, clear } from '@/assets/js/array-store'
 import { SEARCH_KEY } from '@/assets/js/constant'
 import { useStore } from 'vuex'
 
@@ -21,8 +21,14 @@ export default function useSearchHistory() {
     store.commit('setSearchHistory', searches)
   }
 
+  function clearSearch() {
+    const searches = clear(SEARCH_KEY)
+    store.commit('setSearchHistory', searches)
+  }
+
   return {
     saveSearch,
-    deleteSearch
+    deleteSearch,
+    clearSearch
   }
 }
