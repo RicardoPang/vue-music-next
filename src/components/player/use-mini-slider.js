@@ -1,15 +1,15 @@
-import { ref, computed, watch, nextTick, onMounted, onUnmounted } from 'vue'
-import { useScroll } from 'vuex'
+import { ref, computed, watch, nextTick, onMounted, onUnmounted, onActivated, onDeactivated } from 'vue'
+import { useStore } from 'vuex'
 import BScroll from '@better-scroll/core'
-import Slider from '@better-scroll/slide'
+import Slide from '@better-scroll/slide'
 
-BScroll.use(Slider)
+BScroll.use(Slide)
 
-export default function useMiniSlider() {
+export default function useMiniSlider () {
   const sliderWrapperRef = ref(null)
   const slider = ref(null)
 
-  const store = useScroll()
+  const store = useStore()
   const fullScreen = computed(() => store.state.fullScreen)
   const playlist = computed(() => store.state.playlist)
   const currentIndex = computed(() => store.state.currentIndex)
@@ -36,11 +36,15 @@ export default function useMiniSlider() {
               loop: true
             }
           })
+
+          sliderVal.on('slidePageChanged', ({ pageX }) => {
+            store.commit('setCurrentIndex', pageX)
+          })
+        } else {
+          sliderVal.refresh()
         }
-      } else {
-        sliderVal.refresh()
+        sliderVal.goToPage(currentIndex.value, 0, 0)
       }
-      sliderVal.goToPage(currentIndex.value, 0, 0)
     })
 
     watch(currentIndex, (newIndex) => {
@@ -48,13 +52,32 @@ export default function useMiniSlider() {
         sliderVal.goToPage(newIndex, 0, 0)
       }
     })
+
+    watch(playlist, async (newList) => {
+      if (sliderVal && sliderShow.value && newList.length) {
+        await nextTick()
+        sliderVal.refresh()
+      }
+    })
   })
 
   onUnmounted(() => {
+    if (slider.value) {
+      slider.value.destroy()
+    }
+  })
 
+  onActivated(() => {
+    slider.value.enable()
+    slider.value.refresh()
+  })
+
+  onDeactivated(() => {
+    slider.value.disable()
   })
 
   return {
+    slider,
     sliderWrapperRef
   }
 }
