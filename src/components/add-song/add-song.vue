@@ -56,6 +56,12 @@
           >
           </suggest>
         </div>
+        <message ref="messageRef">
+          <div class="message-title">
+            <i class="icon-ok"></i>
+            <span class="text">1首歌曲已经添加到播放列表</span>
+          </div>
+        </message>
       </div>
     </transition>
   </teleport>
@@ -68,6 +74,7 @@ import Switches from '@/components/base/switches/switches'
 import Scroll from '@/components/base/scroll/scroll'
 import SongList from '@/components/base/song-list/song-list'
 import SearchList from '@/components/base/search-list/search-list'
+import Message from '@/components/base/message/message'
 import { ref, computed, nextTick, watch } from 'vue'
 import { useStore } from 'vuex'
 import useSearchHistory from '@/components/search/use-search-history'
@@ -80,7 +87,8 @@ export default {
     Switches,
     Scroll,
     SongList,
-    SearchList
+    SearchList,
+    Message
   },
   setup () {
     const visible = ref(false)
