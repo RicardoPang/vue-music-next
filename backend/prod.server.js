@@ -1,25 +1,13 @@
 const express = require('express')
 const compression = require('compression')
 const cookieParser = require('cookie-parser')
-const csrf = require('xsrf')
 const registerRouter = require('./router')
 
 const port = process.env.PORT || 9002
 
 const app = express()
 
-const csrfProtection = csrf({
-  cookie: true,
-  ignoreMethods: ['HEAD', 'OPTIONS'],
-  checkPathReg: /^\/api/
-})
 app.use(cookieParser())
-app.use(csrfProtection)
-
-app.get('/', function (req, res, next) {
-  res.cookie('XSRF-TOKEN', req.csrfToken())
-  return next()
-})
 
 // 代理自己写的接口
 registerRouter(app)
