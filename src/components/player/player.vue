@@ -120,6 +120,7 @@ import useCd from './use-cd'
 import useLyric from './use-lyric'
 import useMiddleInteractive from './use-middle-interactive'
 import useAnimation from './use-animation'
+import usePlayHistory from './use-play-history'
 import ProgressBar from './progress-bar'
 import Scroll from '@/components/base/scroll/scroll'
 import MiniPlayer from './mini-player'
@@ -196,6 +197,8 @@ export default {
       leave,
       afterLeave
     } = useAnimation()
+
+    const { savePlay } = usePlayHistory()
 
     // computed
     const playlist = computed(() => store.state.playlist)
@@ -299,6 +302,7 @@ export default {
       if (songReady.value) return
       songReady.value = true
       playLyric()
+      savePlay(currentSong.value)
     }
 
     function error () {

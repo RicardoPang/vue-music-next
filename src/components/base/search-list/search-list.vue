@@ -7,9 +7,12 @@
           class="search-item"
           @click="selectItem(item)">
         <span class="text">{{ item }}</span>
-        <span class="icon" @click.stop="deleteItem(item)">
-        <i class="icon-delete"></i>
-      </span>
+        <span
+            v-if="showDelete"
+            class="icon"
+            @click.stop="deleteItem(item)">
+            <i class="icon-delete"></i>
+          </span>
       </li>
     </transition-group>
   </div>
@@ -21,17 +24,21 @@ export default {
   props: {
     searches: {
       type: Array,
-      default() {
+      default () {
         return []
       }
+    },
+    showDelete: {
+      type: Boolean,
+      default: true
     }
   },
   emits: ['select', 'delete'],
   methods: {
-    selectItem(item) {
+    selectItem (item) {
       this.$emit('select', item)
     },
-    deleteItem(item) {
+    deleteItem (item) {
       this.$emit('delete', item)
     }
   }

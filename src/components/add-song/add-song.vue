@@ -13,6 +13,27 @@
               v-model="query"
               placeholder="搜索歌曲"></search-input>
         </div>
+        <div v-show="!query">
+          <switches
+              :items="['最近播放', '搜索历史']"
+              v-model="currentIndex"></switches>
+          <div class="list-wrapper">
+            <scroll
+                v-if="currentIndex===0"
+                class="list-scroll">
+              <div class="list-inner">
+                <song-list :songs="playHistory"></song-list>
+              </div>
+            </scroll>
+            <scroll
+                v-if="currentIndex===1"
+                class="list-scroll">
+              <div class="list-inner">
+                <search-list :searches="searchHistory" :show-delete="false"></search-list>
+              </div>
+            </scroll>
+          </div>
+        </div>
         <div class="search-result" v-show="query">
           <suggest
               :query="query"
@@ -26,29 +47,46 @@
 <script>
 import SearchInput from '@/components/search/search-input'
 import Suggest from '@/components/search/suggest'
-import { ref } from 'vue'
+import Scroll from '@/components/base/scroll/scroll'
+import SongList from '@/components/base/song-list/song-list'
+import SearchList from '@/components/base/search-list/search-list'
+import Switches from '@/components/base/switches/switches'
+import { ref, computed } from 'vue'
+import { useStore } from 'vuex'
 
 export default {
   name: 'add-song',
   components: {
+    SearchList,
+    SongList,
+    Scroll,
+    Switches,
     Suggest,
     SearchInput
   },
-  setup() {
+  setup () {
     const visible = ref(false)
     const query = ref('')
+    const currentIndex = ref(0)
 
-    function show() {
+    const store = useStore()
+    const searchHistory = computed(() => store.state.searchHistory)
+    const playHistory = computed(() => store.state.playHistory)
+
+    function show () {
       visible.value = true
     }
 
-    function hide() {
+    function hide () {
       visible.value = false
     }
 
     return {
       visible,
       query,
+      currentIndex,
+      searchHistory,
+      playHistory,
       show,
       hide
     }
