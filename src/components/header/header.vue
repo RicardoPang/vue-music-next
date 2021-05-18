@@ -1,7 +1,10 @@
 <template>
   <div class="header">
-    <span class="icon"></span>
+    <!--    <span class="icon"></span>-->
     <h1 class="text">音乐奇缘</h1>
+    <router-link class="mine" to="/user">
+      <i class="icon-mine"></i>
+    </router-link>
   </div>
 </template>
 
@@ -41,7 +44,7 @@ export default {
     top: 0;
     right: 0;
 
-    .icon-mime {
+    .icon-mine {
       display: block;
       padding: 12px;
       font-size: $font-size-large-x;
