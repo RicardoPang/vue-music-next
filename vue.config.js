@@ -23,6 +23,6 @@ module.exports = {
       config.plugins.push(new BundleAnalyzerPlugin())
     }
   },
-  productionSourceMap: false,
+  productionSourceMap: false, // 生产不需要打开sourceMap
   publicPath: process.env.NODE_ENV === 'production' ? '/music-next/' : '/'
 }
